@@ -1,6 +1,6 @@
 body {
     font-family: 'Inter', sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue';
-    background-color: #1a002c;
+    background-color: #000000;
     color: #e0e0e0;
     margin: 0;
     padding: 0;
@@ -9,13 +9,12 @@ body {
     align-items: center;
     min-height: 100vh;
     overflow-x: hidden;
-    transition: background-color 0.5s ease-in-out;
     position: relative;
     z-index: 1;
 }
 
 body.player-active-bg {
-    background-color: #1a002c;
+    background-color: #000000;
 }
 
 /* Video Background Styles */
@@ -168,7 +167,7 @@ body.player-active-bg {
 }
 
 .progress-bar-player {
-    background-color: #380056;
+    background-color: #8b5cf6;
     width: 0%;
     height: 100%;
     border-radius: 5px;
@@ -200,18 +199,18 @@ body.player-active-bg {
     padding: 0.5rem;
 }
 .control-btn-player:hover {
-    color: #380056;
+    color: #8b5cf6;
     transform: scale(1.1);
 }
 .control-btn-player.play-pause-player {
     font-size: 2.2rem;
-    color: #380056;
+    color: #8b5cf6;
 }
 .control-btn-player.play-pause-player:hover {
-    color: #380056;
+    color: #a78bfa;
 }
 .control-btn-player.active-feature {
-    color: #380056 !important;
+    color: #8b5cf6 !important;
 }
 
 .secondary-controls-player {
@@ -233,7 +232,7 @@ body.player-active-bg {
 }
 
 .volume-icon-player, .speed-icon {
-    color: #380056;
+    color: #8b5cf6;
     font-size: 0.9rem;
 }
 .volume-icon-player.ml-1 { margin-left: 0.25rem; }
@@ -273,7 +272,7 @@ body.player-active-bg {
 
 #currentSpeedDisplay {
     font-size: 0.85rem;
-    color: #380056;
+    color: #8b5cf6;
     min-width: 35px;
     text-align: right;
 }
