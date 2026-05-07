@@ -3,48 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arutia - Music Player</title>
+    <title>Consume - Chase Atlantic</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="video-background-container">
+    <div class="video-background-container active">
         <video id="backgroundVideo" autoplay loop muted playsinline>
-            </video>
+            <source src="videos/consume.mp4" type="video/mp4">
+        </video>
         <div class="video-overlay"></div>
     </div>
 
-    <div id="homePage" class="page active">
-        <header>
-            <h1>Daftar Lagu</h1>
-        </header>
-        <main>
-            <ul id="songList" class="song-list">
-                <li class="loading-songs">Memuat lagu...</li> 
-            </ul>
-        </main>
-    </div>
-
-    <div id="songDetailPage" class="page">
-        <button id="backToHomeFromDetailBtn" class="back-btn"><i class="fas fa-arrow-left"></i> Kembali</button>
-        <div class="song-detail-container">
-            <img id="detailAlbumArt" src="https://placehold.co/200x200/3a3a4e/e0e0e0?text=Art" alt="Album Art" class="detail-album-art">
-            <h2 id="detailTrackTitle">Judul Lagu</h2>
-            <p id="detailTrackArtist">Nama Artis</p>
-            <p id="detailAlbumName">Nama Album</p>
-            <button id="playFromDetailBtn" class="play-from-detail-btn"><i class="fas fa-play-circle"></i> Putar</button>
-        </div>
-    </div>
-
-    <div id="playerPage" class="page">
-        <button id="backToHomeBtn" class="back-btn"><i class="fas fa-arrow-left"></i> Kembali</button>
+    <div id="playerPage" class="page active">
         <div class="music-player-container">
             <div class="music-player-box">
                 <div class="player-header">
-                    <img id="albumArt" src="https://placehold.co/100x100/3a3a4e/e0e0e0?text=Art" alt="Album Art" class="album-art-player">
+                    <img id="albumArt" src="https://tse3.mm.bing.net/th?id=OIP.VwivM--7Xx_SmgsqXBLi8AAAAA&pid=Api&P=0&h=220" alt="Album Art" class="album-art-player">
                     <div class="track-info-player">
-                        <h2 id="playerTrackTitle">Judul Lagu</h2>
-                        <p id="playerTrackArtist">Nama Artis</p>
+                        <h2 id="playerTrackTitle">Consume</h2>
+                        <p id="playerTrackArtist">Chase Atlantic</p>
                     </div>
                 </div>
 
@@ -60,18 +38,18 @@
                         <div class="time-display-player">
                             <span id="playerCurrentTime">0:00</span>
                             <span id="playerTotalDuration">0:00</span>
-                        </div> 
+                        </div>
                     </div>
 
                     <div class="main-controls-player">
+                        <button id="playerShuffleBtn" class="control-btn-player small-icon"><i class="fas fa-shuffle"></i></button>
                         <button id="playerPrevBtn" class="control-btn-player"><i class="fas fa-backward-step"></i></button>
                         <button id="playerPlayPauseBtn" class="control-btn-player play-pause-player"><i class="fas fa-play"></i></button>
                         <button id="playerNextBtn" class="control-btn-player"><i class="fas fa-forward-step"></i></button>
+                        <button id="playerRepeatBtn" class="control-btn-player small-icon"><i class="fas fa-repeat"></i></button>
                     </div>
 
                     <div class="secondary-controls-player">
-                        <button id="playerRepeatBtn" class="control-btn-player small-icon"><i class="fas fa-repeat"></i></button>
-                        <button id="playerShuffleBtn" class="control-btn-player small-icon"><i class="fas fa-shuffle"></i></button>
                         <div class="volume-control-player">
                             <i class="fas fa-volume-down volume-icon-player"></i>
                             <input type="range" id="playerVolumeSlider" class="volume-slider-player" min="0" max="1" step="0.01" value="0.8">
@@ -84,7 +62,7 @@
                         </div>
                     </div>
                 </div>
-                <p class="footer-credit">//code by: @Arutia</p>
+                <p class="footer-credit">//code by: @Bagasdev</p>
             </div>
         </div>
     </div>
