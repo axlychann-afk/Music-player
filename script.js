@@ -57,7 +57,6 @@ let songs = [
 
 let currentSongIndex = 0;
 let isPlaying = false;
-let isShuffle = false;
 let repeatMode = 0; // 0: no repeat, 1: repeat one, 2: repeat all (ga ngaruh karena cuma 1 lagu)
 
 // --- Player Page Logic ---
@@ -112,9 +111,17 @@ function playTrack() {
             return;
         }
     }
-    isPlaying = true;
-    audioPlayer.play().catch(error => console.error("Error saat play:", error));
-    updatePlayPauseIcon();
+    const playPromise = audioPlayer.play();
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            isPlaying = true;
+            updatePlayPauseIcon();
+        }).catch(error => {
+            console.error("Error saat play:", error);
+            isPlaying = false;
+            updatePlayPauseIcon();
+        });
+    }
 }
 
 function pauseTrack() {
@@ -132,13 +139,11 @@ function updatePlayPauseIcon() {
 }
 
 function prevTrack() {
-    // Karena cuma 1 lagu, restart aja
     audioPlayer.currentTime = 0;
     playTrack();
 }
 
 function nextTrack() {
-    // Karena cuma 1 lagu, restart aja
     audioPlayer.currentTime = 0;
     playTrack();
 }
@@ -155,7 +160,7 @@ audioPlayer.addEventListener('timeupdate', () => {
 
         lyricLines.forEach((line, index) => {
             const lineTime = parseFloat(line.getAttribute('data-time'));
-            let nextLineTime = Infinity; 
+            let nextLineTime = Infinity;
             if (index + 1 < lyricLines.length) {
                 nextLineTime = parseFloat(lyricLines[index + 1].getAttribute('data-time'));
             }
@@ -202,8 +207,8 @@ playerSpeedSlider.addEventListener('input', (e) => {
 });
 
 playerShuffleBtn.addEventListener('click', () => {
-    isShuffle = !isShuffle;
-    playerShuffleBtn.classList.toggle('active-feature', isShuffle);
+    // Nggak ngaruh karena cuma 1 lagu, tapi tetep toggle visual
+    playerShuffleBtn.classList.toggle('active-feature');
 });
 
 playerRepeatBtn.addEventListener('click', () => {
@@ -250,7 +255,6 @@ function init() {
     if (songs.length > 0) {
         currentSongIndex = 0;
         loadSong(songs[currentSongIndex]);
-        playTrack();
     }
     audioPlayer.volume = playerVolumeSlider.value;
     audioPlayer.playbackRate = playerSpeedSlider.value;
@@ -258,5 +262,18 @@ function init() {
     updatePlayPauseIcon();
     updateRepeatButtonUI();
     showPlayerPage();
+    
+    // Coba autoplay
+    const playPromise = audioPlayer.play();
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            isPlaying = true;
+            updatePlayPauseIcon();
+        }).catch(() => {
+            // Autoplay diblokir browser
+            isPlaying = false;
+            updatePlayPauseIcon();
+        });
+    }
 }
 init();
