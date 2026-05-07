@@ -57,21 +57,7 @@ let songs = [
 
 let currentSongIndex = 0;
 let isPlaying = false;
-let repeatMode = 0; // 0: no repeat, 1: repeat one, 2: repeat all (ga ngaruh karena cuma 1 lagu)
-
-// --- Player Page Logic ---
-function showPlayerPage() {
-    playerPage.classList.add('active');
-    bodyElement.classList.add('player-active-bg');
-    backgroundVideoContainer.classList.add('active');
-
-    const currentSong = songs[currentSongIndex];
-    if (currentSong && currentSong.videoBgSrc) {
-        backgroundVideo.src = currentSong.videoBgSrc;
-        backgroundVideo.load();
-        backgroundVideo.play().catch(e => console.error("Error playing video background:", e));
-    }
-}
+let repeatMode = 0;
 
 // --- Player Logic ---
 function loadSong(song) {
@@ -85,6 +71,11 @@ function loadSong(song) {
         playerTotalDuration.textContent = formatTime(audioPlayer.duration);
     };
     audioPlayer.load();
+    // Load video source tapi jangan play dulu
+    if (song.videoBgSrc) {
+        backgroundVideo.src = song.videoBgSrc;
+        backgroundVideo.load();
+    }
     updatePlayPauseIcon();
 }
 
@@ -116,6 +107,11 @@ function playTrack() {
         playPromise.then(() => {
             isPlaying = true;
             updatePlayPauseIcon();
+            // Tampilkan video background
+            backgroundVideoContainer.classList.add('active');
+            if (backgroundVideo.src) {
+                backgroundVideo.play().catch(e => console.error("Error playing video:", e));
+            }
         }).catch(error => {
             console.error("Error saat play:", error);
             isPlaying = false;
@@ -128,6 +124,9 @@ function pauseTrack() {
     isPlaying = false;
     audioPlayer.pause();
     updatePlayPauseIcon();
+    // Sembunyikan video background
+    backgroundVideoContainer.classList.remove('active');
+    backgroundVideo.pause();
 }
 
 function updatePlayPauseIcon() {
@@ -207,7 +206,6 @@ playerSpeedSlider.addEventListener('input', (e) => {
 });
 
 playerShuffleBtn.addEventListener('click', () => {
-    // Nggak ngaruh karena cuma 1 lagu, tapi tetep toggle visual
     playerShuffleBtn.classList.toggle('active-feature');
 });
 
@@ -261,7 +259,11 @@ function init() {
     currentSpeedDisplay.textContent = `${audioPlayer.playbackRate.toFixed(2)}x`;
     updatePlayPauseIcon();
     updateRepeatButtonUI();
-    showPlayerPage();
+    
+    // Tampilkan halaman player
+    playerPage.classList.add('active');
+    bodyElement.classList.add('player-active-bg');
+    // Video TETAP SEMBUNYI sampai play ditekan
     
     // Coba autoplay
     const playPromise = audioPlayer.play();
@@ -269,8 +271,11 @@ function init() {
         playPromise.then(() => {
             isPlaying = true;
             updatePlayPauseIcon();
+            backgroundVideoContainer.classList.add('active');
+            if (backgroundVideo.src) {
+                backgroundVideo.play().catch(e => console.error("Error playing video:", e));
+            }
         }).catch(() => {
-            // Autoplay diblokir browser
             isPlaying = false;
             updatePlayPauseIcon();
         });
