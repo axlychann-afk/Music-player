@@ -203,7 +203,6 @@ playerPrevBtn.addEventListener('click', prevTrack);
 playerNextBtn.addEventListener('click', nextTrack);
 audioPlayer.addEventListener('ended', () => { if (repeatMode !== 1) nextTrack(); });
 
-// Init function - dipanggil setelah intro selesai
 function init() {
     playerPage.classList.add('active');
     bodyElement.classList.add('player-active-bg');
