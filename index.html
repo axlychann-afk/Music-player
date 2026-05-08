@@ -28,7 +28,7 @@
         </section>
     </div>
 
-    <!-- ========== PLAYER MUSIC (Sembunyi dulu) ========== -->
+    <!-- ========== PLAYER MUSIC ========== -->
     <div id="playerSection" style="display: none;">
         <div class="video-background-container">
             <video id="backgroundVideo" loop muted playsinline></video>
@@ -92,15 +92,13 @@
 
     <script src="script.js"></script>
     <script>
-        // Setelah intro selesai, sembunyikan intro & tampilkan player
         setTimeout(function() {
             document.getElementById('introSection').style.display = 'none';
             document.getElementById('playerSection').style.display = 'block';
-            // Panggil init player (function ada di script.js)
             if (typeof init === 'function') {
                 init();
             }
-        }, 10800); // 10.8 detik
+        }, 10800);
     </script>
 </body>
-</html>
+                                </html>
