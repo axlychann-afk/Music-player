@@ -25,7 +25,7 @@ const playerVolumeSlider = document.getElementById('playerVolumeSlider');
 const playerSpeedSlider = document.getElementById('playerSpeedSlider');
 const currentSpeedDisplay = document.getElementById('currentSpeedDisplay');
 
-// App State - HANYA 1 LAGU
+// App State
 let songs = [
     {
         id: 1,
@@ -59,7 +59,6 @@ let currentSongIndex = 0;
 let isPlaying = false;
 let repeatMode = 0;
 
-// --- Player Logic ---
 function loadSong(song) {
     if (!song) return;
     albumArtPlayer.src = song.albumArtUrl;
@@ -71,7 +70,6 @@ function loadSong(song) {
         playerTotalDuration.textContent = formatTime(audioPlayer.duration);
     };
     audioPlayer.load();
-    // Load video source tapi jangan play dulu
     if (song.videoBgSrc) {
         backgroundVideo.src = song.videoBgSrc;
         backgroundVideo.load();
@@ -107,7 +105,6 @@ function playTrack() {
         playPromise.then(() => {
             isPlaying = true;
             updatePlayPauseIcon();
-            // Tampilkan video background
             backgroundVideoContainer.classList.add('active');
             if (backgroundVideo.src) {
                 backgroundVideo.play().catch(e => console.error("Error playing video:", e));
@@ -124,39 +121,24 @@ function pauseTrack() {
     isPlaying = false;
     audioPlayer.pause();
     updatePlayPauseIcon();
-    // Sembunyikan video background
     backgroundVideoContainer.classList.remove('active');
     backgroundVideo.pause();
 }
 
 function updatePlayPauseIcon() {
-    if (isPlaying) {
-        playerPlayPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-    } else {
-        playerPlayPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-    }
+    playerPlayPauseBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
 }
 
-function prevTrack() {
-    audioPlayer.currentTime = 0;
-    playTrack();
-}
-
-function nextTrack() {
-    audioPlayer.currentTime = 0;
-    playTrack();
-}
+function prevTrack() { audioPlayer.currentTime = 0; playTrack(); }
+function nextTrack() { audioPlayer.currentTime = 0; playTrack(); }
 
 audioPlayer.addEventListener('timeupdate', () => {
     if (audioPlayer.duration) {
-        const progressPercent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-        playerProgressBar.style.width = `${progressPercent}%`;
+        playerProgressBar.style.width = `${(audioPlayer.currentTime / audioPlayer.duration) * 100}%`;
         playerCurrentTime.textContent = formatTime(audioPlayer.currentTime);
         
         const currentTime = audioPlayer.currentTime;
         const lyricLines = lyricsContainer.querySelectorAll('.lyric-line');
-        let highlightedLine = null;
-
         lyricLines.forEach((line, index) => {
             const lineTime = parseFloat(line.getAttribute('data-time'));
             let nextLineTime = Infinity;
@@ -165,49 +147,36 @@ audioPlayer.addEventListener('timeupdate', () => {
             }
             if (currentTime >= lineTime && currentTime < nextLineTime) {
                 line.classList.add('highlight');
-                highlightedLine = line;
+                const containerRect = lyricsContainer.getBoundingClientRect();
+                const lineRect = line.getBoundingClientRect();
+                if (lineRect.top < containerRect.top || lineRect.bottom > containerRect.bottom) {
+                    line.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
             } else {
                 line.classList.remove('highlight');
             }
         });
-
-        if (highlightedLine) {
-            const containerRect = lyricsContainer.getBoundingClientRect();
-            const lineRect = highlightedLine.getBoundingClientRect();
-            const isOutsideTop = lineRect.top < containerRect.top;
-            const isOutsideBottom = lineRect.bottom > containerRect.bottom;
-            if (isOutsideTop || isOutsideBottom) {
-                highlightedLine.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        }
     }
 });
 
 function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
 }
 
 playerProgressBarContainer.addEventListener('click', (e) => {
-    if (!audioPlayer.duration || songs.length === 0) return;
-    const width = playerProgressBarContainer.clientWidth;
-    const clickX = e.offsetX;
-    audioPlayer.currentTime = (clickX / width) * audioPlayer.duration;
+    if (!audioPlayer.duration) return;
+    audioPlayer.currentTime = (e.offsetX / playerProgressBarContainer.clientWidth) * audioPlayer.duration;
 });
 
-playerVolumeSlider.addEventListener('input', (e) => {
-    audioPlayer.volume = e.target.value;
-});
-
+playerVolumeSlider.addEventListener('input', (e) => { audioPlayer.volume = e.target.value; });
 playerSpeedSlider.addEventListener('input', (e) => {
     audioPlayer.playbackRate = parseFloat(e.target.value);
     currentSpeedDisplay.textContent = `${audioPlayer.playbackRate.toFixed(2)}x`;
 });
 
-playerShuffleBtn.addEventListener('click', () => {
-    playerShuffleBtn.classList.toggle('active-feature');
-});
+playerShuffleBtn.addEventListener('click', () => { playerShuffleBtn.classList.toggle('active-feature'); });
 
 playerRepeatBtn.addEventListener('click', () => {
     repeatMode = (repeatMode + 1) % 3;
@@ -229,56 +198,21 @@ function updateRepeatButtonUI() {
     }
 }
 
-playerPlayPauseBtn.addEventListener('click', () => {
-    if (isPlaying) {
-        pauseTrack();
-    } else {
-        playTrack();
-    }
-});
-
+playerPlayPauseBtn.addEventListener('click', () => { isPlaying ? pauseTrack() : playTrack(); });
 playerPrevBtn.addEventListener('click', prevTrack);
 playerNextBtn.addEventListener('click', nextTrack);
+audioPlayer.addEventListener('ended', () => { if (repeatMode !== 1) nextTrack(); });
 
-audioPlayer.addEventListener('ended', () => {
-    if (repeatMode === 1) {
-        // Handled by audio.loop = true
-    } else {
-        nextTrack();
-    }
-});
-
-// --- Initialization ---
+// Init function - dipanggil setelah intro selesai
 function init() {
+    playerPage.classList.add('active');
+    bodyElement.classList.add('player-active-bg');
     if (songs.length > 0) {
-        currentSongIndex = 0;
-        loadSong(songs[currentSongIndex]);
+        loadSong(songs[0]);
     }
     audioPlayer.volume = playerVolumeSlider.value;
     audioPlayer.playbackRate = playerSpeedSlider.value;
     currentSpeedDisplay.textContent = `${audioPlayer.playbackRate.toFixed(2)}x`;
     updatePlayPauseIcon();
     updateRepeatButtonUI();
-    
-    // Tampilkan halaman player
-    playerPage.classList.add('active');
-    bodyElement.classList.add('player-active-bg');
-    // Video TETAP SEMBUNYI sampai play ditekan
-    
-    // Coba autoplay
-    const playPromise = audioPlayer.play();
-    if (playPromise !== undefined) {
-        playPromise.then(() => {
-            isPlaying = true;
-            updatePlayPauseIcon();
-            backgroundVideoContainer.classList.add('active');
-            if (backgroundVideo.src) {
-                backgroundVideo.play().catch(e => console.error("Error playing video:", e));
-            }
-        }).catch(() => {
-            isPlaying = false;
-            updatePlayPauseIcon();
-        });
-    }
 }
-init();
